@@ -150,6 +150,10 @@ calculate.addEventListener("click", () => {
       if (periodicRateOfReturn > 0.21) {
         periodicRateOfReturn =
           periodicRateOfReturn - percentageDownPerWeek / 100;
+      } 
+       
+      if (periodicRateOfReturn < 0.2) {
+         periodicRateOfReturn = 0.2;
       }
 
       const apyReturnPerWeek =
