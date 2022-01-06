@@ -155,7 +155,10 @@ calculate.addEventListener("click", () => {
       principalInvestment *
         Math.pow(1 + periodicRateOfReturn / 365, (365 * 7) / 365) -
         principalInvestment;
-      valuesForStat.push([step, parseInt(apyReturnPerWeek * 12)]);
+      valuesForStat.push([
+         `Week ${step} (APY ${parseInt(periodicRateOfReturn * 100)}%)`,
+          parseInt(apyReturn * 12), parseInt(apyReturnPerWeek * 12)
+      ]);
     }
 
     apyReturn = parseFloat(apyReturn).toFixed(0);
@@ -179,7 +182,7 @@ calculate.addEventListener("click", () => {
         principalInvestment;
 
       for (let step = 1; step < iterations; step++) {
-        valuesForStat.push(parseInt(apyReturn * 12));
+        valuesForStat.push([`Week ${step}`, parseInt(apyReturn * 12)]);
       }
     }
 
