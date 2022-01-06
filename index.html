@@ -130,7 +130,7 @@ h3 {
   <script>
     const calculate = document.getElementById("calculate");
 calculate.addEventListener("click", () => {
-  const principalInvestment = Number(document.getElementById("p").value);
+  let principalInvestment = Number(document.getElementById("p").value);
   let periodicRateOfReturn = Number(document.getElementById("r").value) / 100;
   const numberOfCompoundingPeriods = Number(document.getElementById("n").value);
   const multiplier = Number(document.getElementById("m").value);
@@ -165,6 +165,7 @@ calculate.addEventListener("click", () => {
 
     if (multiplier) {
       apyReturn = apyReturn * multiplier;
+      principalInvestment = principalInvestment * multiplier;
     }
   } else {
     apyReturn =
@@ -190,6 +191,7 @@ calculate.addEventListener("click", () => {
 
     if (multiplier) {
       apyReturn = apyReturn * multiplier;
+      principalInvestment = principalInvestment * multiplier;
     }
   }
 
@@ -237,7 +239,6 @@ calculate.addEventListener("click", () => {
     });
   }
 });
-
     </script>
   </BODY>
 </HTML>
