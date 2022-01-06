@@ -1,0 +1,236 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+   <HEAD>
+      <TITLE>MEX Calculator</TITLE>
+     <script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" crossorigin="anonymous"></script>
+     <style>
+       body {
+  background: #f7fafd;
+}
+
+.card {
+  border: none;
+  background: #f7fafd;
+}
+
+.container {
+  color: #666;
+  margin-top: 2rem;
+}
+
+.wrapper {
+  margin: 2rem;
+}
+
+.input-group {
+  margin-bottom: 1rem;
+}
+
+.input-group label {
+  width: 100%;
+}
+
+.input-group-text {
+  background: #5180a7;
+  color: #fff;
+}
+
+.form-control {
+  border-radius: 4px 0 0 4px !important;
+  border-color: #eee;
+}
+
+.card-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6rem;
+  margin: 0 2rem;
+  align-items: center;
+}
+
+.results {
+  background: #fff;
+  color: #5180a7;
+  border-radius: 10px;
+  padding: 3rem;
+}
+
+.btn {
+  background: #004fca;
+  border-color: #004fca;
+}
+
+p {
+  font-size: 1.2rem;
+}
+
+h3 {
+  padding-bottom: 1rem;
+  color: #004fca;
+  font-size: 2.5rem;
+}
+
+       </style>
+   </HEAD>
+   <BODY>
+<div class="wrapper card">
+  <div class="card-body">
+    <div class="from">
+      <div class="input-group">
+        <label for="" class="form-label">Principal amount of token</label>
+        <br>
+        <input id="p" type="text" placeholder="1" class="form-control">
+        <span class="input-group-text">MEX</span>
+      </div>
+
+      <div class="input-group">
+        <label for="" class="form-label">Interest (APY)
+        </label>
+        <br>
+        <input id="r" type="text" placeholder="8.51" value="255" class="form-control">
+        <span class="input-group-text">%</span>
+      </div>
+      <div class="input-group">
+        <label for="" class="form-label">Time of interest</label>
+        <br>
+        <input id="n" type="text" placeholder="15" value="360" class="form-control">
+        <span class="input-group-text">Days</span>
+      </div>
+      <div class="input-group">
+        <label for="" class="form-label">Multiplier</label>
+        <br>
+        <input id="m" type="text" placeholder="12" value="12" class="form-control">
+      </div>
+      <div class="input-group">
+        <label for="" class="form-label">APR down per week (min 20%)</label>
+        <br>
+        <input id="w" type="text" placeholder="3" value="3" class="form-control">
+        <span class="input-group-text">%</span>
+      </div>
+      <p>
+        <button id="calculate" class="btn btn-primary">Calculate</button>
+      </p>
+    </div>
+    <div class="results">
+      <p>Total Interest Earned</p>
+      <h3 id="result"></h3>
+      <p>Total Tokens incl. earnings</p>
+      <h3 id="total"></h3>
+
+      <figure class="highcharts-figure">
+        <div id="container"></div>
+      </figure>
+    </div>
+  </div>
+  <script>
+    const calculate = document.getElementById("calculate");
+calculate.addEventListener("click", () => {
+  const principalInvestment = Number(document.getElementById("p").value);
+  let periodicRateOfReturn = Number(document.getElementById("r").value) / 100;
+  const numberOfCompoundingPeriods = Number(document.getElementById("n").value);
+  const multiplier = Number(document.getElementById("m").value);
+  const percentageDownPerWeek = Number(document.getElementById("w").value);
+  let apyReturn = 0;
+  let valuesForStat = [];
+  const iterations = numberOfCompoundingPeriods / 7;
+  const nf = Intl.NumberFormat();
+
+  if (percentageDownPerWeek && iterations > 1) {
+    for (let step = 1; step < iterations; step++) {
+      if (periodicRateOfReturn > 0.2) {
+        periodicRateOfReturn =
+          periodicRateOfReturn - percentageDownPerWeek / 100;
+      }
+
+      const apyReturnPerWeek =
+        principalInvestment *
+          Math.pow(1 + periodicRateOfReturn / 365, (365 * 7) / 365) -
+        principalInvestment;
+      apyReturn += apyReturnPerWeek;
+      principalInvestment *
+        Math.pow(1 + periodicRateOfReturn / 365, (365 * 7) / 365) -
+        principalInvestment;
+      valuesForStat.push([step, parseInt(apyReturnPerWeek * 12)]);
+    }
+
+    apyReturn = parseFloat(apyReturn).toFixed(0);
+
+    if (multiplier) {
+      apyReturn = apyReturn * multiplier;
+    }
+  } else {
+    apyReturn =
+      principalInvestment *
+        Math.pow(
+          1 + periodicRateOfReturn / 365,
+          (365 * numberOfCompoundingPeriods) / 365
+        ) -
+      principalInvestment;
+
+    if (iterations > 1) {
+      const apyReturnPerWeek =
+        principalInvestment *
+          Math.pow(1 + periodicRateOfReturn / 365, (365 * 7) / 365) -
+        principalInvestment;
+
+      for (let step = 1; step < iterations; step++) {
+        valuesForStat.push(parseInt(apyReturn * 12));
+      }
+    }
+
+    apyReturn = parseFloat(apyReturn).toFixed(0);
+
+    if (multiplier) {
+      apyReturn = apyReturn * multiplier;
+    }
+  }
+
+  const result = document.getElementById("result");
+  result.innerText = nf.format(apyReturn);
+
+  const total = document.getElementById("total");
+  total.innerText = nf.format(apyReturn + principalInvestment);
+
+  if (valuesForStat.length > 1) {
+    Highcharts.chart("container", {
+      chart: {
+        polar: true,
+        type: "line"
+      },
+      title: {
+        text: ""
+      },
+      yAxis: {
+        visible: false
+      },
+      xAxis: {
+        visible: false,
+        accessibility: {
+          rangeDescription: ""
+        }
+      },
+
+      series: [
+        {
+          name: "MEX",
+          data: valuesForStat
+        }
+      ],
+
+      responsive: {
+        rules: [
+          {
+            condition: {
+              maxWidth: 500
+            }
+          }
+        ]
+      }
+    });
+  }
+});
+    </script>
+  </BODY>
+</HTML>
