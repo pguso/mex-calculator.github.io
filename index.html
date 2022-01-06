@@ -133,13 +133,17 @@ calculate.addEventListener("click", () => {
   let principalInvestment = Number(document.getElementById("p").value);
   let periodicRateOfReturn = Number(document.getElementById("r").value) / 100;
   const numberOfCompoundingPeriods = Number(document.getElementById("n").value);
-  const multiplier = Number(document.getElementById("m").value);
+  let multiplier = Number(document.getElementById("m").value);
   const percentageDownPerWeek = Number(document.getElementById("w").value);
   let apyReturn = 0;
   let valuesForStat = [];
   const iterations = numberOfCompoundingPeriods / 7;
   console.log(iterations, numberOfCompoundingPeriods, valuesForStat);
   const nf = Intl.NumberFormat();
+
+  if (!multiplier) {
+    multiplier = 1;
+  }
 
   if (percentageDownPerWeek && iterations > 1) {
     for (let step = 1; step < iterations; step++) {
@@ -243,6 +247,7 @@ calculate.addEventListener("click", () => {
     document.getElementById("container").style.display = "none";
   }
 });
+
     </script>
   </BODY>
 </HTML>
