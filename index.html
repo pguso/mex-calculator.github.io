@@ -138,6 +138,7 @@ calculate.addEventListener("click", () => {
   let apyReturn = 0;
   let valuesForStat = [];
   const iterations = numberOfCompoundingPeriods / 7;
+  console.log(iterations, numberOfCompoundingPeriods, valuesForStat);
   const nf = Intl.NumberFormat();
 
   if (percentageDownPerWeek && iterations > 1) {
@@ -202,6 +203,7 @@ calculate.addEventListener("click", () => {
   total.innerText = nf.format(apyReturn + principalInvestment);
 
   if (valuesForStat.length > 1) {
+    document.getElementById("container").style.display = "block";
     Highcharts.chart("container", {
       chart: {
         polar: true,
@@ -237,6 +239,8 @@ calculate.addEventListener("click", () => {
         ]
       }
     });
+  } else {
+    document.getElementById("container").style.display = "none";
   }
 });
     </script>
